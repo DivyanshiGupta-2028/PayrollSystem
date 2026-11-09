@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apex Payroll Run Module | HR Operations</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="app-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <div class="brand-icon">₹</div>
+        <div>
+          <h1 class="brand-title">Apex Payroll Module</h1>
+          <p class="brand-sub">Enterprise Monthly Payroll Run & Payslip Generation</p>
+        </div>
+      </div>
+      <div class="user-badge">
+        <span class="status-dot"></span>
+        <span>HR Operations Portal</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Navigation Tabs -->
+    <nav class="tabs">
+      <button class="tab-btn active" id="tabPayroll" onclick="switchTab('payroll')">Payroll Processing</button>
+      <button class="tab-btn" id="tabEmployees" onclick="switchTab('employees')">Employee Directory</button>
+    </nav>
+
+    <!-- Global Alert Container -->
+    <div id="alertContainer"></div>
+
+    <!-- TAB 1: PAYROLL PROCESSING -->
+    <div id="payrollTabContent">
+      <!-- Run Controls Card -->
+      <section class="card">
+        <h2 class="card-title">Run or Inspect Monthly Payroll</h2>
+        <div class="run-controls-grid">
+          <div class="form-group">
+            <label class="form-label" for="selectMonth">Payroll Month</label>
+            <select id="selectMonth" class="form-select">
+              <option value="1">01 - January</option>
+              <option value="2">02 - February</option>
+              <option value="3">03 - March</option>
+              <option value="4">04 - April</option>
+              <option value="5">05 - May</option>
+              <option value="6">06 - June</option>
+              <option value="7">07 - July</option>
+              <option value="8">08 - August</option>
+              <option value="9">09 - September</option>
+              <option value="10">10 - October</option>
+              <option value="11" selected>11 - November</option>
+              <option value="12">12 - December</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="selectYear">Payroll Year</label>
+            <select id="selectYear" class="form-select">
+              <option value="2026" selected>2026</option>
+              <option value="2025">2025</option>
+              <option value="2024">2024</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="historyRuns">Past Finalized Runs</label>
+            <select id="historyRuns" class="form-select" onchange="loadSelectedHistoricalRun()">
+              <option value="">-- Quick Select Finalized Run --</option>
+            </select>
+          </div>
+
+          <div class="actions-group">
+            <button id="btnRunPayroll" class="btn btn-primary" onclick="triggerPayrollRun()">
+              <span id="btnRunText">Run Payroll</span>
+            </button>
+            <button id="btnLoadPayroll" class="btn btn-secondary" onclick="fetchPayrollRun()">
+              <span>Load Saved Run</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Metrics Summary Section -->
+      <section id="metricsSection" class="metrics-grid" style="display: none;">
+        <div class="metric-card">
+          <div class="metric-title">Employees Processed</div>
+          <div class="metric-value" id="metricTotalEmployees">0</div>
+          <div class="metric-sub" id="metricStatus">Status: Finalized</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-title">Total Gross Pay</div>
+          <div class="metric-value" id="metricTotalGross">₹0</div>
+          <div class="metric-sub">Earned compensation</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-title">Total PF Deduction</div>
+          <div class="metric-value" id="metricTotalPF">₹0</div>
+          <div class="metric-sub">12% Basic Salary</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-title">Total Professional Tax</div>
+          <div class="metric-value" id="metricTotalPT">₹0</div>
+          <div class="metric-sub">Flat ₹200 / employee</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-title">Total Net Disbursement</div>
+          <div class="metric-value highlight-net" id="metricTotalNet">₹0</div>
+          <div class="metric-sub">Net payout across company</div>
+        </div>
+      </section>
+
+      <!-- Results Table Card -->
+      <section id="resultsSection" class="card" style="display: none;">
+        <div class="table-header-controls">
+          <div>
+            <h3 class="card-title" style="margin-bottom: 2px;" id="tableHeading">Payroll Register</h3>
+            <p style="font-size: 12px; color: var(--text-muted);" id="runDetailsSubtitle"></p>
+          </div>
+          <div class="table-filter-group">
+            <input type="text" id="searchInput" class="form-input" placeholder="Search name or ID..." oninput="handleSearch()">
+            <select id="departmentFilter" class="form-select" onchange="handleFilter()">
+              <option value="ALL">All Departments</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Employee Name</th>
+                <th>Department & Role</th>
+                <th class="text-right">Basic Salary</th>
+                <th class="text-right">Working Days</th>
+                <th class="text-right">Days Present</th>
+                <th class="text-right">Gross Pay</th>
+                <th class="text-right">PF (12%)</th>
+                <th class="text-right">Prof Tax</th>
+                <th class="text-right">Net Pay</th>
+                <th class="text-center">Action</th>
+              </tr>
+            </thead>
+            <tbody id="payrollTableBody">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination Controls -->
+        <div class="pagination-container" id="paginationContainer">
+          <div id="paginationInfo">Showing 1 to 6 of 6 entries</div>
+          <div class="pagination-controls">
+            <button id="btnPrevPage" class="btn btn-secondary btn-sm" onclick="changePage(-1)">Previous</button>
+            <span id="pageIndicator" style="padding: 4px 8px; font-weight: 600;">1 / 1</span>
+            <button id="btnNextPage" class="btn btn-secondary btn-sm" onclick="changePage(1)">Next</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Empty / Initial Placeholder -->
+      <section id="emptyPlaceholder" class="card" style="text-align: center; padding: 48px 20px;">
+        <div style="font-size: 40px; margin-bottom: 12px;">📊</div>
+        <h3 style="margin-bottom: 8px;">No Payroll Run Loaded Yet</h3>
+        <p style="color: var(--text-muted); max-width: 500px; margin: 0 auto 20px;">
+          Select a month and year above and click <strong>"Run Payroll"</strong> to process the monthly calculation, or select a previously finalized run from the dropdown.
+        </p>
+      </section>
+    </div>
+
+    <!-- TAB 2: EMPLOYEE DIRECTORY -->
+    <div id="employeesTabContent" style="display: none;">
+      <section class="card">
+        <h2 class="card-title">Employee Master Records</h2>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Employee Code</th>
+                <th>Full Name</th>
+                <th>Department</th>
+                <th>Designation</th>
+                <th class="text-right">Basic Salary</th>
+                <th>Date of Joining</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="employeeMasterTableBody">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Payslip Modal (Printable) -->
+  <div id="payslipModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+      <button class="modal-close no-print" onclick="closePayslipModal()">✕</button>
+      
+      <div class="payslip-container" id="printablePayslip">
+        <div class="payslip-header">
+          <div class="payslip-company-title">APEX HR TECHNOLOGIES PVT. LTD.</div>
+          <div class="payslip-company-sub">Tech Park, Sector 4, Hyderabad, India | CIN: U72200TG2020PTC123456</div>
+          <div class="payslip-title" id="slipPeriodTitle">SALARY PAYSLIP FOR NOVEMBER 2026</div>
+        </div>
+
+        <div class="payslip-info-grid">
+          <div class="info-item">
+            <span class="info-label">Employee ID / Code:</span>
+            <span class="info-value" id="slipEmpCode">EMP001</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Employee Name:</span>
+            <span class="info-value" id="slipEmpName">Ravi Sharma</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Department:</span>
+            <span class="info-value" id="slipDept">Engineering</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Designation:</span>
+            <span class="info-value" id="slipDesignation">Senior Software Engineer</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Date of Joining:</span>
+            <span class="info-value" id="slipDoj">2023-01-15</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Payroll Run ID:</span>
+            <span class="info-value" id="slipRunId">#1</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Total Working Days:</span>
+            <span class="info-value" id="slipWorkingDays">26</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Days Present:</span>
+            <span class="info-value" id="slipDaysPresent">24</span>
+          </div>
+        </div>
+
+        <!-- Breakdown Table -->
+        <table class="breakdown-table">
+          <thead>
+            <tr>
+              <th>Earnings</th>
+              <th class="text-right">Amount (₹)</th>
+              <th>Deductions</th>
+              <th class="text-right">Amount (₹)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Basic Salary</td>
+              <td class="text-right font-mono" id="slipBasic">₹30,000</td>
+              <td>Provident Fund (PF 12%)</td>
+              <td class="text-right font-mono" id="slipPF">₹3,600</td>
+            </tr>
+            <tr>
+              <td>Gross Pay (Earned)</td>
+              <td class="text-right font-mono" id="slipGross">₹27,692</td>
+              <td>Professional Tax (PT)</td>
+              <td class="text-right font-mono" id="slipPT">₹200</td>
+            </tr>
+            <tr class="total-row">
+              <td>Total Gross Earnings</td>
+              <td class="text-right font-mono" id="slipTotalGross">₹27,692</td>
+              <td>Total Deductions</td>
+              <td class="text-right font-mono" id="slipTotalDeductions">₹3,800</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Net Pay Banner -->
+        <div class="net-pay-banner">
+          <div>
+            <div style="font-weight: 700; color: #15803d; font-size: 14px;">NET TAKE-HOME SALARY</div>
+            <div class="net-pay-words" id="slipWords">Twenty Three Thousand Eight Hundred Ninety Two Rupees Only</div>
+          </div>
+          <div style="font-size: 24px; font-weight: 800; color: #15803d;" id="slipNet">₹23,892</div>
+        </div>
+
+        <div class="payslip-footer-notes">
+          <div>
+            <p>Note: This is a system-generated immutable payslip.</p>
+            <p>Generated on: <span id="slipGenDate">11/09/2026</span></p>
+          </div>
+          <div class="sign-box">
+            Authorized Signatory
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px;" class="no-print">
+        <button class="btn btn-secondary" onclick="closePayslipModal()">Close</button>
+        <button class="btn btn-primary" onclick="printPayslip()">🖨️ Print Payslip</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
