@@ -192,3 +192,4 @@ internal class FakePayrollRepository : IPayrollRepository
         return Task.FromResult<IEnumerable<PayrollRun>>(_runs.Values.Select(v => v.Run));
     }
 }
+

@@ -121,3 +121,4 @@ public class ApiResponse<T>
     public static ApiResponse<T> Fail(string message, int statusCode = 400) =>
         new() { Success = false, StatusCode = statusCode, Message = message, Data = default };
 }
+

@@ -3,6 +3,7 @@ using PayrollSystem.Core.Interfaces;
 using PayrollSystem.Core.Services;
 using PayrollSystem.Infrastructure.Data;
 using PayrollSystem.Infrastructure.Repositories;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,6 +46,7 @@ app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference();
 }
 
 app.UseCors("AllowAll");

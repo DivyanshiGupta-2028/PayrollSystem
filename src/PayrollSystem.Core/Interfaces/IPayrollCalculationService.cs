@@ -17,3 +17,4 @@ public class PayrollCalculationResult
     public decimal TotalDeductions => PFDeduction + ProfessionalTax;
     public decimal NetPay { get; set; }
 }
+

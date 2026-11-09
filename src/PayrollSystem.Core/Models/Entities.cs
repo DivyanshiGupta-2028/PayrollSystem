@@ -72,3 +72,4 @@ public class PayrollDetail
     public decimal ProfessionalTax { get; set; }
     public decimal NetPay { get; set; }
 }
+

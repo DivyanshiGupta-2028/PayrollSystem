@@ -263,3 +263,4 @@ Given additional time for an enterprise deployment, I would prioritize:
 3. **Role-Based Access Control (RBAC):** ASP.NET Core Identity with JWT authentication differentiating `Payroll Administrator` vs `Employee Self-Service`.
 4. **Tax Exemption Declarations:** Section 80C, 80D, and Old vs. New Tax Regime annual income tax TDS deductions.
 5. **Docker Containerization:** `Dockerfile` and `docker-compose.yml` to spin up SQL Server and the API with zero local setup.
+

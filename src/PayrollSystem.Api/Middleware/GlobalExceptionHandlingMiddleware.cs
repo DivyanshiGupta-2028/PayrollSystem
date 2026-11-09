@@ -59,3 +59,4 @@ public class GlobalExceptionHandlingMiddleware
         await context.Response.WriteAsync(json);
     }
 }
+
