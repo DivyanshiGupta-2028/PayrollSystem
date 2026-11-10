@@ -27,6 +27,36 @@ const DEMO_EMPLOYEES = [
 
 const demoRuns = new Map();
 
+function seedDemoRuns() {
+  const octItems = [
+    { employeeId: 1, employeeCode: 'EMP001', name: 'Ravi Sharma', firstName: 'Ravi', lastName: 'Sharma', email: 'ravi.sharma@company.com', departmentId: 1, departmentName: 'Engineering', designation: 'Senior Software Engineer', basicSalary: 30000, dateOfJoining: '2023-01-15T00:00:00Z', workingDays: 25, daysPresent: 25, grossPay: 30000, pfDeduction: 3600, professionalTax: 200, netPay: 26200 },
+    { employeeId: 2, employeeCode: 'EMP002', name: 'Priya Patel', firstName: 'Priya', lastName: 'Patel', email: 'priya.patel@company.com', departmentId: 1, departmentName: 'Engineering', designation: 'Frontend Developer', basicSalary: 45000, dateOfJoining: '2023-04-10T00:00:00Z', workingDays: 25, daysPresent: 24, grossPay: 43200, pfDeduction: 5400, professionalTax: 200, netPay: 37600 },
+    { employeeId: 3, employeeCode: 'EMP003', name: 'Amit Verma', firstName: 'Amit', lastName: 'Verma', email: 'amit.verma@company.com', departmentId: 2, departmentName: 'Human Resources', designation: 'HR Specialist', basicSalary: 28000, dateOfJoining: '2022-08-01T00:00:00Z', workingDays: 25, daysPresent: 25, grossPay: 28000, pfDeduction: 3360, professionalTax: 200, netPay: 24440 },
+    { employeeId: 4, employeeCode: 'EMP004', name: 'Sneha Reddy', firstName: 'Sneha', lastName: 'Reddy', email: 'sneha.reddy@company.com', departmentId: 3, departmentName: 'Finance', designation: 'Financial Analyst', basicSalary: 52000, dateOfJoining: '2021-11-20T00:00:00Z', workingDays: 25, daysPresent: 23, grossPay: 47840, pfDeduction: 6240, professionalTax: 200, netPay: 41400 },
+    { employeeId: 5, employeeCode: 'EMP005', name: 'Vikram Singh', firstName: 'Vikram', lastName: 'Singh', email: 'vikram.singh@company.com', departmentId: 1, departmentName: 'Engineering', designation: 'QA Engineer', basicSalary: 35000, dateOfJoining: '2023-09-05T00:00:00Z', workingDays: 25, daysPresent: 25, grossPay: 35000, pfDeduction: 4200, professionalTax: 200, netPay: 30600 },
+    { employeeId: 6, employeeCode: 'EMP006', name: 'Ananya Gupta', firstName: 'Ananya', lastName: 'Gupta', email: 'ananya.gupta@company.com', departmentId: 2, departmentName: 'Human Resources', designation: 'Talent Acquisition Lead', basicSalary: 40000, dateOfJoining: '2024-02-15T00:00:00Z', workingDays: 25, daysPresent: 25, grossPay: 40000, pfDeduction: 4800, professionalTax: 200, netPay: 35000 }
+  ];
+
+  demoRuns.set('10_2026', {
+    payrollRunId: 1,
+    month: 10,
+    year: 2026,
+    payrollMonth: 10,
+    payrollYear: 2026,
+    runDate: '2026-10-31T18:30:00Z',
+    totalEmployees: 6,
+    totalGrossPay: 224040,
+    totalPFDeduction: 27600,
+    totalProfessionalTax: 1200,
+    totalNetPay: 195240,
+    items: octItems,
+    status: 'Finalized',
+    createdBy: 'System Seed'
+  });
+}
+
+seedDemoRuns();
+
 // Initialize application on page load
 document.addEventListener('DOMContentLoaded', async () => {
   await checkBackendAvailability();
@@ -266,10 +296,15 @@ async function loadPayrollHistory() {
   select.innerHTML = '<option value="">-- Quick Select Finalized Run --</option>';
 
   if (isDemoMode) {
+    if (demoRuns.size === 0) {
+      seedDemoRuns();
+    }
     demoRuns.forEach((r, key) => {
+      const month = r.month || r.payrollMonth;
+      const year = r.year || r.payrollYear;
       const option = document.createElement('option');
       option.value = key;
-      option.textContent = `Run #${r.payrollRunId}: ${getMonthName(r.month)} ${r.year} (${r.totalEmployees} employees - ₹${formatCurrency(r.totalNetPay)})`;
+      option.textContent = `Run #${r.payrollRunId}: ${getMonthName(month)} ${year} (${r.totalEmployees} employees - ₹${formatCurrency(r.totalNetPay)})`;
       select.appendChild(option);
     });
     return;
@@ -279,12 +314,16 @@ async function loadPayrollHistory() {
     const response = await fetch(`${API_BASE}/payroll/history`);
     if (response.ok) {
       const runs = await response.json();
-      runs.forEach(r => {
-        const option = document.createElement('option');
-        option.value = `${r.payrollMonth}_${r.payrollYear}`;
-        option.textContent = `Run #${r.payrollRunId}: ${getMonthName(r.payrollMonth)} ${r.payrollYear} (${r.totalEmployees} employees - ₹${formatCurrency(r.totalNetPay)})`;
-        select.appendChild(option);
-      });
+      if (runs && runs.length > 0) {
+        runs.forEach(r => {
+          const month = r.payrollMonth || r.month;
+          const year = r.payrollYear || r.year;
+          const option = document.createElement('option');
+          option.value = `${month}_${year}`;
+          option.textContent = `Run #${r.payrollRunId}: ${getMonthName(month)} ${year} (${r.totalEmployees} employees - ₹${formatCurrency(r.totalNetPay)})`;
+          select.appendChild(option);
+        });
+      }
     }
   } catch (e) {
     console.error('Failed to load payroll history', e);
@@ -591,8 +630,40 @@ function escapeHtml(str) {
 
 function convertToWords(amount) {
   const n = Math.floor(amount);
-  if (n === 23892) return 'Twenty Three Thousand Eight Hundred Ninety Two Rupees Only';
-  if (n === 39400) return 'Thirty Nine Thousand Four Hundred Rupees Only';
-  if (n === 20385) return 'Twenty Thousand Three Hundred Eighty Five Rupees Only';
-  return `${formatCurrency(n)} Rupees Only`;
+  if (n <= 0) return 'Zero Rupees Only';
+
+  const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine',
+    'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+  const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+
+  function convertTwoDigits(num) {
+    if (num < 20) return ones[num];
+    const t = Math.floor(num / 10);
+    const o = num % 10;
+    return (tens[t] + (o > 0 ? ' ' + ones[o] : '')).trim();
+  }
+
+  function convertThreeDigits(num) {
+    let res = '';
+    const h = Math.floor(num / 100);
+    const rem = num % 100;
+    if (h > 0) res += ones[h] + ' Hundred';
+    if (rem > 0) res += (res ? ' ' : '') + convertTwoDigits(rem);
+    return res;
+  }
+
+  let words = '';
+  const crore = Math.floor(n / 10000000);
+  let rem = n % 10000000;
+  const lakh = Math.floor(rem / 100000);
+  rem = rem % 100000;
+  const thousand = Math.floor(rem / 1000);
+  rem = rem % 1000;
+
+  if (crore > 0) words += convertTwoDigits(crore) + ' Crore ';
+  if (lakh > 0) words += convertTwoDigits(lakh) + ' Lakh ';
+  if (thousand > 0) words += convertTwoDigits(thousand) + ' Thousand ';
+  if (rem > 0) words += convertThreeDigits(rem);
+
+  return words.trim() + ' Rupees Only';
 }

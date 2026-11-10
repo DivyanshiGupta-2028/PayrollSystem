@@ -348,6 +348,15 @@ BEGIN
 END;
 GO
 
+-- ----------------------------------------------------------------------------
+-- Auto-seed initial finalized run for previous month (October 2026) if missing
+-- ----------------------------------------------------------------------------
+IF NOT EXISTS (SELECT 1 FROM dbo.PayrollRuns WHERE PayrollMonth = 10 AND PayrollYear = 2026)
+BEGIN
+    EXEC dbo.usp_RunPayroll @Month = 10, @Year = 2026, @CreatedBy = 'System Seed';
+END
+GO
+
 PRINT 'Stored procedures created successfully.';
 GO
 
