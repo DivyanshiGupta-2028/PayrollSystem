@@ -145,7 +145,7 @@ async function triggerPayrollRun() {
         const data = await response.json();
         currentPayrollData = data;
         currentRunId = data.payrollRunId;
-        showAlert(`Payroll for ${getMonthName(month)} ${year} was processed and finalized successfully! (Run #${data.payrollRunId})`, 'success');
+        showAlert(`Payroll for ${getMonthName(month)} ${year} was processed and finalized successfully! (Run ID: ${data.payrollRunId})`, 'success');
         renderPayrollView(data);
         loadPayrollHistory();
       } else if (response.status === 409) {
@@ -229,7 +229,7 @@ async function simulatePayrollRun(month, year) {
   demoRuns.set(key, summary);
   currentPayrollData = summary;
   currentRunId = runId;
-  showAlert(`Payroll for ${getMonthName(month)} ${year} was processed and finalized successfully! (Run #${runId})`, 'success');
+  showAlert(`Payroll for ${getMonthName(month)} ${year} was processed and finalized successfully! (Run ID: ${runId})`, 'success');
   renderPayrollView(summary);
   loadPayrollHistory();
 }
@@ -250,7 +250,7 @@ async function fetchPayrollRun(explicitMonth = null, explicitYear = null) {
         currentPayrollData = data;
         currentRunId = data.payrollRunId;
         renderPayrollView(data);
-        showAlert(`Loaded finalized payroll run #${data.payrollRunId} for ${getMonthName(month)} ${year}.`, 'info');
+        showAlert(`Loaded finalized payroll run ID: ${data.payrollRunId} for ${getMonthName(month)} ${year}.`, 'info');
       } else {
         hidePayrollView();
         showAlert(`No finalized payroll run found for ${getMonthName(month)} ${year}. Click "Run Payroll" to process it.`, 'info');
@@ -263,7 +263,7 @@ async function fetchPayrollRun(explicitMonth = null, explicitYear = null) {
         currentPayrollData = data;
         currentRunId = data.payrollRunId;
         renderPayrollView(data);
-        showAlert(`Loaded finalized payroll run #${data.payrollRunId} for ${getMonthName(month)} ${year}.`, 'info');
+        showAlert(`Loaded finalized payroll run ID: ${data.payrollRunId} for ${getMonthName(month)} ${year}.`, 'info');
       } else if (response.status === 404) {
         hidePayrollView();
         showAlert(`No finalized payroll run found for ${getMonthName(month)} ${year}. You can trigger a new run using "Run Payroll".`, 'info');
@@ -292,7 +292,7 @@ async function loadPayrollHistory() {
       const year = r.year || r.payrollYear;
       const option = document.createElement('option');
       option.value = key;
-      option.textContent = `Run #${r.payrollRunId}: ${getMonthName(month)} ${year} (${r.totalEmployees} employees - ₹${formatCurrency(r.totalNetPay)})`;
+      option.textContent = `Run ID ${r.payrollRunId}: ${getMonthName(month)} ${year} (${r.totalEmployees} employees - ₹${formatCurrency(r.totalNetPay)})`;
       select.appendChild(option);
     });
     return;
@@ -308,7 +308,7 @@ async function loadPayrollHistory() {
           const year = r.payrollYear || r.year;
           const option = document.createElement('option');
           option.value = `${month}_${year}`;
-          option.textContent = `Run #${r.payrollRunId}: ${getMonthName(month)} ${year} (${r.totalEmployees} employees - ₹${formatCurrency(r.totalNetPay)})`;
+          option.textContent = `Run ID ${r.payrollRunId}: ${getMonthName(month)} ${year} (${r.totalEmployees} employees - ₹${formatCurrency(r.totalNetPay)})`;
           select.appendChild(option);
         });
       }
@@ -499,7 +499,7 @@ async function viewPayslip(runId, employeeId) {
     document.getElementById('slipDept').textContent = slip.departmentName;
     document.getElementById('slipDesignation').textContent = slip.designation;
     document.getElementById('slipDoj').textContent = formatDateOnly(slip.dateOfJoining);
-    document.getElementById('slipRunId').textContent = `#${slip.payrollRunId}`;
+    document.getElementById('slipRunId').textContent = slip.payrollRunId;
     document.getElementById('slipWorkingDays').textContent = slip.workingDays;
     document.getElementById('slipDaysPresent').textContent = `${slip.daysPresent} (Absent: ${slip.daysAbsent})`;
 
