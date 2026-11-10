@@ -3,7 +3,6 @@
 Practical assessment submission for Full Stack Developer (.NET 9 / SQL Server).
 
 - Candidate: Divyanshi Gupta
-- Live Demo: https://divyanshigupta-2028.github.io/PayrollSystem/
 - Repository: https://github.com/DivyanshiGupta-2028/PayrollSystem
 
 ---
