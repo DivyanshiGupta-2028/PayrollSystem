@@ -71,10 +71,6 @@ async function checkBackendAvailability() {
 
 function enableDemoMode() {
   isDemoMode = true;
-  const badge = document.querySelector('.user-badge span:last-child');
-  if (badge) {
-    badge.textContent = 'Live Interactive Preview (Cloud Demo)';
-  }
 }
 
 // Navigation
@@ -222,7 +218,7 @@ async function simulatePayrollRun(month, year) {
     totalProfessionalTax: items.reduce((s, i) => s + i.professionalTax, 0),
     totalNetPay: items.reduce((s, i) => s + i.netPay, 0),
     status: 'Finalized',
-    createdBy: 'HR Admin (Interactive Demo)',
+    createdBy: 'HR Admin',
     items
   };
 
