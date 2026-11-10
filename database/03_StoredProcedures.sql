@@ -1,18 +1,8 @@
--- ============================================================================
--- File: 03_StoredProcedures.sql
--- Description: Stored procedures for Payroll calculations, retrievals, 
---              and payslip generation.
--- Database: TymLabs
--- ============================================================================
-
+-- Stored procedures for Payroll calculations and reporting
 USE TymLabs;
 GO
 
--- ----------------------------------------------------------------------------
 -- 1. usp_RunPayroll
--- Calculates and saves the payroll run for the given month and year.
--- Enforces immutability: returns error code if already processed.
--- ----------------------------------------------------------------------------
 CREATE OR ALTER PROCEDURE dbo.usp_RunPayroll
     @Month      INT,
     @Year       INT,
@@ -194,10 +184,7 @@ BEGIN
 END;
 GO
 
--- ----------------------------------------------------------------------------
 -- 2. usp_GetPayrollRun
--- Returns the saved payroll run summary and details for a given Month and Year.
--- ----------------------------------------------------------------------------
 CREATE OR ALTER PROCEDURE dbo.usp_GetPayrollRun
     @Month INT,
     @Year  INT
@@ -249,10 +236,7 @@ BEGIN
 END;
 GO
 
--- ----------------------------------------------------------------------------
 -- 3. usp_GetEmployeePayslip
--- Returns individual payslip details for an employee in a given run.
--- ----------------------------------------------------------------------------
 CREATE OR ALTER PROCEDURE dbo.usp_GetEmployeePayslip
     @RunId      INT,
     @EmployeeId INT
@@ -292,10 +276,7 @@ BEGIN
 END;
 GO
 
--- ----------------------------------------------------------------------------
 -- 4. usp_GetEmployees
--- Returns list of all active employees with department information.
--- ----------------------------------------------------------------------------
 CREATE OR ALTER PROCEDURE dbo.usp_GetEmployees
 AS
 BEGIN
@@ -322,10 +303,7 @@ BEGIN
 END;
 GO
 
--- ----------------------------------------------------------------------------
 -- 5. usp_GetAllPayrollRuns
--- Returns list of all historical runs for easy dashboard navigation.
--- ----------------------------------------------------------------------------
 CREATE OR ALTER PROCEDURE dbo.usp_GetAllPayrollRuns
 AS
 BEGIN
@@ -348,9 +326,7 @@ BEGIN
 END;
 GO
 
--- ----------------------------------------------------------------------------
--- Auto-seed initial finalized run for previous month (October 2026) if missing
--- ----------------------------------------------------------------------------
+-- Auto-seed previous month (Oct 2026) if missing
 IF NOT EXISTS (SELECT 1 FROM dbo.PayrollRuns WHERE PayrollMonth = 10 AND PayrollYear = 2026)
 BEGIN
     EXEC dbo.usp_RunPayroll @Month = 10, @Year = 2026, @CreatedBy = 'System Seed';

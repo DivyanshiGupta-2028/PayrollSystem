@@ -16,12 +16,7 @@ public class PayrollController : ControllerBase
         _payrollService = payrollService ?? throw new ArgumentNullException(nameof(payrollService));
     }
 
-    /// <summary>
-    /// POST /api/payroll/run
-    /// Trigger the payroll run for a specified month and year.
-    /// Body: { month, year }
-    /// Expected response: 201 Created — run summary (or 409 Conflict if already exists)
-    /// </summary>
+    // POST /api/payroll/run
     [HttpPost("run")]
     [ProducesResponseType(typeof(PayrollRunSummaryDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -32,12 +27,7 @@ public class PayrollController : ControllerBase
         return StatusCode(StatusCodes.Status201Created, summary);
     }
 
-    /// <summary>
-    /// GET /api/payroll/{month}/{year}
-    /// Return the saved payroll run for a given month and year.
-    /// Expected response: 200 OK or 404 Not Found
-    /// Supports optional query parameters ?page=1&pageSize=10 for pagination.
-    /// </summary>
+    // GET /api/payroll/{month}/{year}
     [HttpGet("{month:int}/{year:int}")]
     [ProducesResponseType(typeof(PayrollRunSummaryDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -52,11 +42,7 @@ public class PayrollController : ControllerBase
         return Ok(result);
     }
 
-    /// <summary>
-    /// GET /api/payroll/{runId}/payslip/{employeeId}
-    /// Return the individual payslip for one employee.
-    /// Expected response: 200 OK or 404 Not Found
-    /// </summary>
+    // GET /api/payroll/{runId}/payslip/{employeeId}
     [HttpGet("{runId:int}/payslip/{employeeId:int}")]
     [ProducesResponseType(typeof(PayslipDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -67,10 +53,7 @@ public class PayrollController : ControllerBase
         return Ok(payslip);
     }
 
-    /// <summary>
-    /// GET /api/payroll/history
-    /// Returns historical payroll runs to easily inspect past periods.
-    /// </summary>
+    // GET /api/payroll/history
     [HttpGet("history")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetPayrollHistory()

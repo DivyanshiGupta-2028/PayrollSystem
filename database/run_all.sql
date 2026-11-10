@@ -1,32 +1,20 @@
--- ============================================================================
--- File: run_all.sql
--- Description: Master deployment script that creates the database, schema,
---              seeds initial data, and creates stored procedures in sequence.
--- Execution: Run in SQL Server Management Studio (SSMS) or via sqlcmd:
---            sqlcmd -S . -E -i database/run_all.sql
--- ============================================================================
-
+-- Master script to setup schema, seed data, and stored procedures in sequence
 :setvar DatabasePath ""
 
-PRINT '==================================================';
-PRINT 'Starting Payroll System Database Setup';
-PRINT '==================================================';
+PRINT 'Starting TymLabs database setup...';
 GO
 
--- 1. Create Schema and Tables
+-- 1. Tables and constraints
 :r 01_Schema.sql
 GO
 
--- 2. Seed Initial Employees, Departments, and Attendance
+-- 2. Seed data
 :r 02_SeedData.sql
 GO
 
--- 3. Create Stored Procedures
+-- 3. Stored procedures
 :r 03_StoredProcedures.sql
 GO
 
-PRINT '==================================================';
-PRINT 'Payroll System Database Setup Completed Successfully!';
-PRINT '==================================================';
+PRINT 'TymLabs database setup completed.';
 GO
-

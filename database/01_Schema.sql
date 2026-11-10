@@ -1,11 +1,4 @@
--- ============================================================================
--- File: 01_Schema.sql
--- Description: Creates all database tables, constraints, relationships, 
---              indexes, and immutability safeguards for the Payroll System.
--- Database: TymLabs
--- Target Engine: Microsoft SQL Server 2016+ / 2022
--- ============================================================================
-
+-- Database Schema for Payroll System
 IF DB_ID('TymLabs') IS NULL
 BEGIN
     CREATE DATABASE TymLabs;
@@ -15,9 +8,7 @@ GO
 USE TymLabs;
 GO
 
--- ----------------------------------------------------------------------------
--- Drop existing tables in reverse dependency order if rebuilding
--- ----------------------------------------------------------------------------
+-- Drop tables if rebuilding
 IF OBJECT_ID('dbo.PayrollDetails', 'U') IS NOT NULL DROP TABLE dbo.PayrollDetails;
 IF OBJECT_ID('dbo.PayrollRuns', 'U') IS NOT NULL DROP TABLE dbo.PayrollRuns;
 IF OBJECT_ID('dbo.MonthlyAttendance', 'U') IS NOT NULL DROP TABLE dbo.MonthlyAttendance;
@@ -25,9 +16,7 @@ IF OBJECT_ID('dbo.Employees', 'U') IS NOT NULL DROP TABLE dbo.Employees;
 IF OBJECT_ID('dbo.Departments', 'U') IS NOT NULL DROP TABLE dbo.Departments;
 GO
 
--- ----------------------------------------------------------------------------
 -- 1. Departments Table
--- ----------------------------------------------------------------------------
 CREATE TABLE dbo.Departments (
     DepartmentId    INT IDENTITY(1,1)   NOT NULL,
     DepartmentCode  NVARCHAR(20)        NOT NULL,
@@ -38,9 +27,7 @@ CREATE TABLE dbo.Departments (
 );
 GO
 
--- ----------------------------------------------------------------------------
 -- 2. Employees Table
--- ----------------------------------------------------------------------------
 CREATE TABLE dbo.Employees (
     EmployeeId      INT IDENTITY(1,1)   NOT NULL,
     EmployeeCode    NVARCHAR(20)        NOT NULL,
@@ -63,65 +50,58 @@ CREATE TABLE dbo.Employees (
 GO
 
 CREATE NONCLUSTERED INDEX IX_Employees_DepartmentId ON dbo.Employees(DepartmentId);
-CREATE NONCLUSTERED INDEX IX_Employees_IsActive ON dbo.Employees(IsActive) INCLUDE (EmployeeCode, FirstName, LastName, BasicSalary);
+CREATE NONCLUSTERED INDEX IX_Employees_IsActive ON dbo.Employees(IsActive) INCLUDE (EmployeeCode, BasicSalary);
 GO
 
--- ----------------------------------------------------------------------------
 -- 3. MonthlyAttendance Table
--- Stores monthly working days and days present per employee.
--- ----------------------------------------------------------------------------
 CREATE TABLE dbo.MonthlyAttendance (
-    AttendanceId      INT IDENTITY(1,1) NOT NULL,
-    EmployeeId        INT               NOT NULL,
-    PayrollMonth      INT               NOT NULL,
-    PayrollYear       INT               NOT NULL,
-    TotalWorkingDays  INT               NOT NULL,
-    DaysPresent       DECIMAL(5,2)      NOT NULL,
-    Remarks           NVARCHAR(255)     NULL,
-    CreatedAt         DATETIME2(7)      NOT NULL CONSTRAINT DF_MonthlyAttendance_CreatedAt DEFAULT SYSUTCDATETIME(),
+    AttendanceId        INT IDENTITY(1,1)   NOT NULL,
+    EmployeeId          INT                 NOT NULL,
+    PayrollMonth        INT                 NOT NULL,
+    PayrollYear         INT                 NOT NULL,
+    TotalWorkingDays    INT                 NOT NULL,
+    DaysPresent         DECIMAL(5,2)        NOT NULL,
+    Remarks             NVARCHAR(250)       NULL,
+    CreatedAt           DATETIME2(7)        NOT NULL CONSTRAINT DF_MonthlyAttendance_CreatedAt DEFAULT SYSUTCDATETIME(),
     CONSTRAINT PK_MonthlyAttendance PRIMARY KEY CLUSTERED (AttendanceId),
     CONSTRAINT FK_MonthlyAttendance_Employees FOREIGN KEY (EmployeeId) REFERENCES dbo.Employees(EmployeeId),
     CONSTRAINT UQ_MonthlyAttendance_Emp_Month_Year UNIQUE (EmployeeId, PayrollMonth, PayrollYear),
     CONSTRAINT CK_MonthlyAttendance_Month CHECK (PayrollMonth BETWEEN 1 AND 12),
     CONSTRAINT CK_MonthlyAttendance_Year CHECK (PayrollYear >= 2000),
-    CONSTRAINT CK_MonthlyAttendance_WorkingDays CHECK (TotalWorkingDays >= 0),
-    CONSTRAINT CK_MonthlyAttendance_DaysPresent CHECK (DaysPresent >= 0 AND DaysPresent <= TotalWorkingDays)
+    CONSTRAINT CK_MonthlyAttendance_WorkingDays CHECK (TotalWorkingDays >= 0 AND TotalWorkingDays <= 31),
+    CONSTRAINT CK_MonthlyAttendance_DaysPresent CHECK (DaysPresent >= 0.0 AND DaysPresent <= TotalWorkingDays)
 );
 GO
 
-CREATE NONCLUSTERED INDEX IX_MonthlyAttendance_Month_Year ON dbo.MonthlyAttendance(PayrollMonth, PayrollYear) INCLUDE (EmployeeId, TotalWorkingDays, DaysPresent);
+CREATE NONCLUSTERED INDEX IX_MonthlyAttendance_Period ON dbo.MonthlyAttendance(PayrollMonth, PayrollYear) INCLUDE (EmployeeId, TotalWorkingDays, DaysPresent);
 GO
 
--- ----------------------------------------------------------------------------
--- 4. PayrollRuns Table (Header)
--- Immutability requirement: Once finalized, a payroll run cannot be edited or deleted.
--- ----------------------------------------------------------------------------
+-- 4. PayrollRuns Table
 CREATE TABLE dbo.PayrollRuns (
     PayrollRunId            INT IDENTITY(1,1)   NOT NULL,
     PayrollMonth            INT                 NOT NULL,
     PayrollYear             INT                 NOT NULL,
     RunDate                 DATETIME2(7)        NOT NULL CONSTRAINT DF_PayrollRuns_RunDate DEFAULT SYSUTCDATETIME(),
-    TotalEmployees          INT                 NOT NULL CONSTRAINT DF_PayrollRuns_TotalEmployees DEFAULT 0,
-    TotalGrossPay           DECIMAL(18,2)       NOT NULL CONSTRAINT DF_PayrollRuns_TotalGross DEFAULT 0,
-    TotalPFDeduction        DECIMAL(18,2)       NOT NULL CONSTRAINT DF_PayrollRuns_TotalPF DEFAULT 0,
-    TotalProfessionalTax    DECIMAL(18,2)       NOT NULL CONSTRAINT DF_PayrollRuns_TotalPT DEFAULT 0,
-    TotalNetPay             DECIMAL(18,2)       NOT NULL CONSTRAINT DF_PayrollRuns_TotalNet DEFAULT 0,
-    Status                  NVARCHAR(20)        NOT NULL CONSTRAINT DF_PayrollRuns_Status DEFAULT 'Finalized',
+    TotalEmployees          INT                 NOT NULL,
+    TotalGrossPay           DECIMAL(18,2)       NOT NULL,
+    TotalPFDeduction        DECIMAL(18,2)       NOT NULL,
+    TotalProfessionalTax    DECIMAL(18,2)       NOT NULL,
+    TotalNetPay             DECIMAL(18,2)       NOT NULL,
+    Status                  NVARCHAR(30)        NOT NULL CONSTRAINT DF_PayrollRuns_Status DEFAULT 'Finalized',
     CreatedBy               NVARCHAR(100)       NOT NULL CONSTRAINT DF_PayrollRuns_CreatedBy DEFAULT 'SYSTEM',
+    CreatedAt               DATETIME2(7)        NOT NULL CONSTRAINT DF_PayrollRuns_CreatedAt DEFAULT SYSUTCDATETIME(),
     CONSTRAINT PK_PayrollRuns PRIMARY KEY CLUSTERED (PayrollRunId),
-    CONSTRAINT UQ_PayrollRuns_Month_Year UNIQUE (PayrollMonth, PayrollYear),
+    CONSTRAINT UQ_PayrollRuns_Period UNIQUE (PayrollMonth, PayrollYear),
     CONSTRAINT CK_PayrollRuns_Month CHECK (PayrollMonth BETWEEN 1 AND 12),
     CONSTRAINT CK_PayrollRuns_Year CHECK (PayrollYear >= 2000),
-    CONSTRAINT CK_PayrollRuns_Status CHECK (Status IN ('Draft', 'Finalized'))
+    CONSTRAINT CK_PayrollRuns_Status CHECK (Status IN ('Draft', 'Finalized', 'Voided'))
 );
 GO
 
-CREATE UNIQUE NONCLUSTERED INDEX IX_PayrollRuns_Month_Year ON dbo.PayrollRuns(PayrollMonth, PayrollYear);
+CREATE NONCLUSTERED INDEX IX_PayrollRuns_Period ON dbo.PayrollRuns(PayrollYear DESC, PayrollMonth DESC);
 GO
 
--- ----------------------------------------------------------------------------
--- 5. PayrollDetails Table (Line items per employee)
--- ----------------------------------------------------------------------------
+-- 5. PayrollDetails Table
 CREATE TABLE dbo.PayrollDetails (
     PayrollDetailId     INT IDENTITY(1,1)   NOT NULL,
     PayrollRunId        INT                 NOT NULL,
@@ -148,10 +128,7 @@ CREATE NONCLUSTERED INDEX IX_PayrollDetails_RunId ON dbo.PayrollDetails(PayrollR
 CREATE NONCLUSTERED INDEX IX_PayrollDetails_EmployeeId ON dbo.PayrollDetails(EmployeeId);
 GO
 
--- ----------------------------------------------------------------------------
--- Immutability Safeguard Triggers
--- Prevents UPDATE or DELETE operations on Finalized Payroll records at database level.
--- ----------------------------------------------------------------------------
+-- Immutability Triggers
 CREATE OR ALTER TRIGGER dbo.trg_EnforcePayrollRunsImmutability
 ON dbo.PayrollRuns
 AFTER UPDATE, DELETE
@@ -186,4 +163,3 @@ BEGIN
     END
 END;
 GO
-
