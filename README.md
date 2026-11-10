@@ -4,8 +4,13 @@
 [![Dapper](https://img.shields.io/badge/ORM-Dapper%20%2B%20ADO.NET-orange.svg)](https://github.com/DapperLib/Dapper)
 [![SQL Server](https://img.shields.io/badge/Database-SQL%20Server-red.svg)](https://www.microsoft.com/sql-server)
 [![Tests](https://img.shields.io/badge/Tests-xUnit%20(22%20passed)-brightgreen.svg)](https://xunit.net/)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-success.svg)](https://divyanshigupta-2028.github.io/PayrollSystem/)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-Repository-black.svg)](https://github.com/DivyanshiGupta-2028/PayrollSystem)
 
 > **Technical Assessment Submission**  
+> **Candidate:** Divyanshi Gupta  
+> **Repository:** [https://github.com/DivyanshiGupta-2028/PayrollSystem](https://github.com/DivyanshiGupta-2028/PayrollSystem)  
+> **Live Web Demo:** [https://divyanshigupta-2028.github.io/PayrollSystem/](https://divyanshigupta-2028.github.io/PayrollSystem/)  
 > **Position:** Full Stack Developer (.NET / SQL Server) — 2–3 Years Experience  
 > **Feature:** Monthly Employee Payroll Run, Validation, Calculation, and Payslip Generation
 

@@ -30,3 +30,5 @@ TestResults/
 .DS_Store
 Thumbs.db
 
+
+*.zip

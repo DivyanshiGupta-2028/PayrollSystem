@@ -207,3 +207,4 @@ We enforce this at **three distinct layers**:
 - [ ] Start the project: `dotnet run --project src/PayrollSystem.Api/PayrollSystem.Api.csproj --launch-profile http`.
 - [ ] Open [http://localhost:5229](http://localhost:5229) in browser.
 - [ ] Have [http://localhost:5229/scalar/v1](http://localhost:5229/scalar/v1) ready to showcase interactive OpenAPI documentation.
+
