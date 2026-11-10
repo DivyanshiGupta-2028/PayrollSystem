@@ -460,7 +460,7 @@ async function viewPayslip(runId, employeeId) {
         netPayInWords: convertToWords(net)
       };
     } else {
-      const response = await fetch(`${API_BASE}/payroll/${runId}/slip/${employeeId}`);
+      const response = await fetch(`${API_BASE}/payroll/${runId}/payslip/${employeeId}`);
       if (!response.ok) {
         const err = await response.json();
         showAlert(`Failed to fetch payslip: ${err.message}`, 'danger');
