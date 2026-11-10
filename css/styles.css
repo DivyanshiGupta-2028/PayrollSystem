@@ -591,28 +591,113 @@ tr:hover td {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Print CSS */
+/* Print Stylesheet - Ensures exactly 1 single page print */
 @media print {
-  body * {
-    visibility: hidden;
-  }
-  .modal-overlay {
-    position: static;
-    background: none;
-    padding: 0;
-  }
-  .modal-content, .payslip-container, .payslip-container * {
-    visibility: visible;
-  }
-  .modal-content {
-    box-shadow: none;
-    border: none;
-    padding: 0;
-    max-width: 100%;
-    margin: 0;
-  }
+  /* Completely remove background UI from document flow */
+  header,
+  main,
+  nav,
+  .tabs,
+  #alertContainer,
+  .modal-close,
   .no-print {
     display: none !important;
+  }
+
+  /* Reset html & body so no scroll or extra page space is created */
+  html,
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    font-size: 11pt !important;
+  }
+
+  /* Modal becomes a clean inline container on page 1 */
+  .modal-overlay {
+    display: block !important;
+    position: static !important;
+    inset: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+
+  .modal-content {
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+  }
+
+  .payslip-container {
+    border: 1px solid #334155 !important;
+    border-radius: 4px !important;
+    padding: 18px 22px !important;
+    margin: 0 !important;
+    background: #ffffff !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .payslip-header {
+    border-bottom: 2px solid #0f172a !important;
+    padding-bottom: 8px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .payslip-info-grid {
+    padding: 10px 14px !important;
+    gap: 8px 20px !important;
+    margin-bottom: 12px !important;
+    background: #f8fafc !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .breakdown-table {
+    margin-bottom: 12px !important;
+  }
+
+  .breakdown-table th {
+    background: #f1f5f9 !important;
+    color: #0f172a !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    padding: 6px 10px !important;
+  }
+
+  .breakdown-table td {
+    padding: 6px 10px !important;
+  }
+
+  .net-pay-banner {
+    padding: 10px 14px !important;
+    margin-bottom: 12px !important;
+    background: #f0fdf4 !important;
+    border: 1.5px solid #86efac !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .payslip-footer-notes {
+    margin-top: 24px !important;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 10mm 10mm;
   }
 }
 
