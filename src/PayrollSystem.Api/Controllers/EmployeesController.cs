@@ -16,11 +16,7 @@ public class EmployeesController : ControllerBase
         _employeeService = employeeService ?? throw new ArgumentNullException(nameof(employeeService));
     }
 
-    /// <summary>
-    /// GET /api/employees
-    /// Returns the list of all active employees.
-    /// Expected response: 200 OK — array of employees
-    /// </summary>
+    // GET /api/employees
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<EmployeeDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetEmployees()

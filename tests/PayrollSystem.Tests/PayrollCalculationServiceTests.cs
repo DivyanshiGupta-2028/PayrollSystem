@@ -7,15 +7,7 @@ public class PayrollCalculationServiceTests
 {
     private readonly PayrollCalculationService _calculator = new();
 
-    /// <summary>
-    /// Requirement from Assessment Brief:
-    /// Employee: Ravi Sharma | Basic: ₹30,000 | Working days: 26 | Days present: 24
-    /// Expected:
-    /// - Gross Pay: ₹27,692
-    /// - PF (12% of ₹30,000): ₹3,600
-    /// - Professional Tax: ₹200
-    /// - Net Pay: ₹23,892
-    /// </summary>
+    // Verification test for Ravi Sharma (EMP001): Basic 30,000, Working days 26, Days present 24 -> Net 23,892
     [Fact]
     public void Calculate_RaviSharmaExample_MatchesBriefSpecificationExactly()
     {

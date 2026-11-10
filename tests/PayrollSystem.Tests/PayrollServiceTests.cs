@@ -109,9 +109,7 @@ public class PayrollServiceTests
     }
 }
 
-/// <summary>
-/// Test Double for IPayrollRepository
-/// </summary>
+// In-memory test repository for unit testing service methods
 internal class FakePayrollRepository : IPayrollRepository
 {
     public HashSet<(int Month, int Year)> ExistingRuns { get; } = new();
