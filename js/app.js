@@ -1,10 +1,4 @@
-// ============================================================================
-// File: app.js
-// Description: Client-side logic for Apex Payroll Run Module.
-//              Supports both Live ASP.NET Core API Backend and Interactive
-//              GitHub Pages Demo Mode.
-// ============================================================================
-
+// Client-side controller for Payroll Module
 const API_BASE = '/api';
 
 let isDemoMode = false;
@@ -83,9 +77,7 @@ function enableDemoMode() {
   }
 }
 
-// ----------------------------------------------------------------------------
-// Navigation / Tab Switching
-// ----------------------------------------------------------------------------
+// Navigation
 function switchTab(tab) {
   const payrollTabBtn = document.getElementById('tabPayroll');
   const employeesTabBtn = document.getElementById('tabEmployees');
@@ -106,9 +98,7 @@ function switchTab(tab) {
   }
 }
 
-// ----------------------------------------------------------------------------
-// Alerts / Feedback
-// ----------------------------------------------------------------------------
+// Alerts and notifications
 function showAlert(message, type = 'info') {
   const container = document.getElementById('alertContainer');
   const alertClass = type === 'conflict' ? 'alert-conflict' : (type === 'danger' ? 'alert-danger' : (type === 'success' ? 'alert-success' : 'alert-info'));
@@ -128,9 +118,7 @@ function clearAlert() {
   document.getElementById('alertContainer').innerHTML = '';
 }
 
-// ----------------------------------------------------------------------------
-// API Calls: Run Payroll & Load Payroll
-// ----------------------------------------------------------------------------
+// Payroll API calls
 async function triggerPayrollRun() {
   clearAlert();
   const month = parseInt(document.getElementById('selectMonth').value, 10);
@@ -339,9 +327,7 @@ function loadSelectedHistoricalRun() {
   fetchPayrollRun(month, year);
 }
 
-// ----------------------------------------------------------------------------
-// Rendering Functions
-// ----------------------------------------------------------------------------
+// Render functions
 function renderPayrollView(data) {
   document.getElementById('emptyPlaceholder').style.display = 'none';
   document.getElementById('metricsSection').style.display = 'grid';
@@ -462,9 +448,7 @@ function changePage(direction) {
   }
 }
 
-// ----------------------------------------------------------------------------
-// Payslip Modal & Printable View
-// ----------------------------------------------------------------------------
+// Payslip modal
 async function viewPayslip(runId, employeeId) {
   try {
     let slip;
@@ -544,9 +528,7 @@ function printPayslip() {
   window.print();
 }
 
-// ----------------------------------------------------------------------------
-// Employee Directory Tab
-// ----------------------------------------------------------------------------
+// Employee directory tab
 async function loadEmployees() {
   try {
     let list;
@@ -583,9 +565,7 @@ async function loadEmployees() {
   }
 }
 
-// ----------------------------------------------------------------------------
-// Utility Helpers
-// ----------------------------------------------------------------------------
+// Utilities
 function formatCurrency(amount) {
   if (amount === undefined || amount === null) return '0';
   return Math.round(amount).toLocaleString('en-IN');
