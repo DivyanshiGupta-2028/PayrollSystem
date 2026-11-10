@@ -25,7 +25,7 @@ builder.Services.AddCors(options =>
 
 // 3. Register Application Services & Dependency Injection
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? "Server=.;Database=PayrollDb;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=True;";
+    ?? "Server=DIVYANSHI_PC\\MSSQLSERVER03;Database=TymLabs;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=True;";
 
 builder.Services.AddSingleton<IDbConnectionFactory>(_ => new SqlConnectionFactory(connectionString));
 

@@ -2,17 +2,17 @@
 -- File: 01_Schema.sql
 -- Description: Creates all database tables, constraints, relationships, 
 --              indexes, and immutability safeguards for the Payroll System.
--- Database: PayrollDb
+-- Database: TymLabs
 -- Target Engine: Microsoft SQL Server 2016+ / 2022
 -- ============================================================================
 
-IF DB_ID('PayrollDb') IS NULL
+IF DB_ID('TymLabs') IS NULL
 BEGIN
-    CREATE DATABASE PayrollDb;
+    CREATE DATABASE TymLabs;
 END
 GO
 
-USE PayrollDb;
+USE TymLabs;
 GO
 
 -- ----------------------------------------------------------------------------

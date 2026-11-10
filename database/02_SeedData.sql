@@ -1,10 +1,10 @@
 -- ============================================================================
 -- File: 02_SeedData.sql
 -- Description: Inserts initial seed data (Departments, Employees, Attendance)
--- Database: PayrollDb
+-- Database: TymLabs
 -- ============================================================================
 
-USE PayrollDb;
+USE TymLabs;
 GO
 
 SET NOCOUNT ON;

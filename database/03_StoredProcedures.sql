@@ -2,10 +2,10 @@
 -- File: 03_StoredProcedures.sql
 -- Description: Stored procedures for Payroll calculations, retrievals, 
 --              and payslip generation.
--- Database: PayrollDb
+-- Database: TymLabs
 -- ============================================================================
 
-USE PayrollDb;
+USE TymLabs;
 GO
 
 -- ----------------------------------------------------------------------------

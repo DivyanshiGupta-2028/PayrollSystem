@@ -131,7 +131,7 @@ Update the connection string in `src/PayrollSystem.Api/appsettings.json` if your
 ```json
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Server=.;Database=PayrollDb;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=True;"
+    "DefaultConnection": "Server=DIVYANSHI_PC\\MSSQLSERVER03;Database=TymLabs;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=True;"
   }
 }
 ```
