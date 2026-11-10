@@ -98,12 +98,11 @@ function switchTab(tab) {
 function showAlert(message, type = 'info') {
   const container = document.getElementById('alertContainer');
   const alertClass = type === 'conflict' ? 'alert-conflict' : (type === 'danger' ? 'alert-danger' : (type === 'success' ? 'alert-success' : 'alert-info'));
-  const icon = type === 'conflict' ? '⚠️' : (type === 'danger' ? '❌' : (type === 'success' ? '✅' : 'ℹ️'));
 
   container.innerHTML = `
     <div class="alert ${alertClass}">
-      <div><strong>${icon}</strong> ${escapeHtml(message)}</div>
-      <button class="alert-close" onclick="this.parentElement.remove()">✕</button>
+      <div>${escapeHtml(message)}</div>
+      <button class="alert-close" onclick="this.parentElement.remove()" title="Close">&times;</button>
     </div>
   `;
 
@@ -420,7 +419,7 @@ function renderTable() {
         <td class="text-right font-mono" style="font-weight:700; color: var(--success); font-size:14px;">₹${formatCurrency(item.netPay)}</td>
         <td class="text-center">
           <button class="btn btn-secondary btn-sm" onclick="viewPayslip(${currentRunId}, ${item.employeeId})">
-            📄 Payslip
+            View Payslip
           </button>
         </td>
       `;
