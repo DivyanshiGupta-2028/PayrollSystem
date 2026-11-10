@@ -171,7 +171,7 @@ All endpoints return JSON responses with standard HTTP status codes.
 | `GET` | `/api/employees` | Return list of active employees | `200 OK` |
 | `POST` | `/api/payroll/run` | Process monthly payroll run | `201 Created`, `400 Bad Request`, `409 Conflict` |
 | `GET` | `/api/payroll/{month}/{year}` | Get saved run for period *(supports `?page=1&pageSize=10`)* | `200 OK`, `400 Bad Request`, `404 Not Found` |
-| `GET` | `/api/payroll/{runId}/slip/{employeeId}` | Get printable payslip for an employee | `200 OK`, `400 Bad Request`, `404 Not Found` |
+| `GET` | `/api/payroll/{runId}/payslip/{employeeId}` | Get printable payslip for an employee | `200 OK`, `400 Bad Request`, `404 Not Found` |
 | `GET` | `/api/payroll/history` | List historical finalized runs | `200 OK` |
 
 ### Sample Payloads & Responses

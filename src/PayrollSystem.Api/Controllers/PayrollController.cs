@@ -53,11 +53,11 @@ public class PayrollController : ControllerBase
     }
 
     /// <summary>
-    /// GET /api/payroll/{runId}/slip/{employeeId}
+    /// GET /api/payroll/{runId}/payslip/{employeeId}
     /// Return the individual payslip for one employee.
     /// Expected response: 200 OK or 404 Not Found
     /// </summary>
-    [HttpGet("{runId:int}/slip/{employeeId:int}")]
+    [HttpGet("{runId:int}/payslip/{employeeId:int}")]
     [ProducesResponseType(typeof(PayslipDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
